@@ -1,0 +1,17 @@
+{
+  "colleges": [
+    {
+      "name": "Example Engineering College",
+      "location": "Andhra Pradesh",
+      "placement_year": "2025",
+      "highest_package": "₹12 LPA",
+      "average_package": "₹5 LPA",
+      "placement_percentage": "85%",
+      "top_recruiters": [
+        "TCS",
+        "Infosys",
+        "Wipro"
+      ]
+    }
+  ]
+}

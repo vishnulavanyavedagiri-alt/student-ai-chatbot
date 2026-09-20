@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Ava - AI Student Assistant</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #dbeafe, #fce7f3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chat-container {
+            width: 480px;
+            height: 720px;
+            background: white;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4f46e5, #ec4899);
+            color: white;
+            text-align: center;
+            padding: 18px;
+        }
+
+        .header h1 {
+            font-size: 23px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 13px;
+        }
+
+        .avatar-section {
+            text-align: center;
+            padding: 18px;
+            background: #f8fafc;
+        }
+
+        .avatar {
+            width: 130px;
+            height: 130px;
+            margin: auto;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #fbcfe8, #ddd6fe);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 80px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .speaking {
+            animation: speaking 0.8s infinite;
+        }
+
+        @keyframes speaking {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.08);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .name {
+            margin-top: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #4f46e5;
+        }
+
+        .messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 12px 15px;
+            margin-bottom: 12px;
+            border-radius: 18px;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .bot {
+            background: #eef2ff;
+            color: #312e81;
+        }
+
+        .user {
+            margin-left: auto;
+            background: #6366f1;
+            color: white;
+        }
+
+        .input-area {
+            padding: 12px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            gap: 8px;
+        }
+
+        #userInput {
+            flex: 1;
+            padding: 13px;
+            border-radius: 25px;
+            border: 1px solid #ccc;
+            outline: none;
+            font-size: 14px;
+        }
+
+        button {
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        #voiceButton {
+            background: #ec4899;
+            color: white;
+        }
+
+        #sendButton {
+            background: #4f46e5;
+            color: white;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="chat-container">
+
+    <div class="header">
+        <h1>🎓 AI Student Assistant</h1>
+        <p>Colleges • Placements • Courses • Admissions</p>
+    </div>
+
+    <div class="avatar-section">
+
+        <div id="avatar" class="avatar">
+            👩🏻‍💻
+        </div>
+
+        <div class="name">
+            Ava
+        </div>
+
+    </div>
+
+    <div id="messages" class="messages">
+
+        <div class="message bot">
+
+            Hey! 👋 I'm Ava, your AI Student Assistant. 😊
+
+            <br><br>
+
+            I'm here to help you with your college and study questions.
+
+            <br><br>
+
+            You can ask me about:
+
+            <br>🎓 B.Tech colleges
+            <br>📍 Colleges near you
+            <br>⭐ Ratings and reviews
+            <br>💼 Campus placements
+            <br>📚 Courses and branches
+            <br>💰 Fees
+            <br>🏫 College facilities
+            <br>💡 Study and career questions
+
+            <br><br>
+
+            So, what would you like to know? 😊
+
+        </div>
+
+    </div>
+
+    <div class="input-area">
+
+        <input
+            id="userInput"
+            type="text"
+            placeholder="Ask me anything..."
+        >
+
+        <button
+            id="voiceButton"
+            onclick="startVoice()">
+            🎤
+        </button>
+
+        <button
+            id="sendButton"
+            onclick="sendMessage()">
+            ➤
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const input = document.getElementById("userInput");
+
+const messages = document.getElementById("messages");
+
+const avatar = document.getElementById("avatar");
+
+
+/* ADD MESSAGE */
+
+function addMessage(text, sender) {
+
+    const message = document.createElement("div");
+
+    message.className = "message " + sender;
+
+    message.innerHTML = text;
+
+    messages.appendChild(message);
+
+    messages.scrollTop = messages.scrollHeight;
+}
+
+
+/* SEND MESSAGE */
+
+async function sendMessage() {
+
+    const question = input.value.trim();
+
+    if (!question) {
+        return;
+    }
+
+    addMessage(question, "user");
+
+    input.value = "";
+
+    const thinking = document.createElement("div");
+
+    thinking.className = "message bot";
+
+    thinking.id = "thinking";
+
+    thinking.innerHTML = "🤔 Let me think about that...";
+
+    messages.appendChild(thinking);
+
+    try {
+
+        const response = await fetch(
+            "http://localhost:3000/api/chat",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    question: question
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        document.getElementById("thinking").remove();
+
+        addMessage(data.answer, "bot");
+
+        speak(data.answer);
+
+    }
+
+    catch (error) {
+
+        document.getElementById("thinking").remove();
+
+        addMessage(
+            "⚠️ I can't connect to my AI brain yet. We need to start the backend server. Don't worry — we'll do that next! 😊",
+            "bot"
+        );
+
+    }
+}
+
+
+/* SPEAK */
+
+function speak(text) {
+
+    if (!("speechSynthesis" in window)) {
+        return;
+    }
+
+    const cleanText = text.replace(/<[^>]*>/g, "");
+
+    const speech =
+        new SpeechSynthesisUtterance(cleanText);
+
+    speech.rate = 0.95;
+
+    speech.pitch = 1.2;
+
+    speech.volume = 1;
+
+    speech.onstart = function() {
+        avatar.classList.add("speaking");
+    };
+
+    speech.onend = function() {
+        avatar.classList.remove("speaking");
+    };
+
+    speechSynthesis.speak(speech);
+}
+
+
+/* VOICE INPUT */
+
+function startVoice() {
+
+    const Recognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+    if (!Recognition) {
+
+        alert(
+            "Please use Google Chrome for voice input."
+        );
+
+        return;
+    }
+
+    const recognition =
+        new Recognition();
+
+    recognition.lang = "en-IN";
+
+    recognition.start();
+
+    input.placeholder = "Listening... 🎤";
+
+    recognition.onresult =
+        function(event) {
+
+            input.value =
+                event.results[0][0].transcript;
+
+            input.placeholder =
+                "Ask me anything...";
+
+            sendMessage();
+        };
+
+    recognition.onerror =
+        function() {
+
+            input.placeholder =
+                "Ask me anything...";
+
+        };
+}
+
+
+/* ENTER KEY */
+
+input.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Enter") {
+            sendMessage();
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>

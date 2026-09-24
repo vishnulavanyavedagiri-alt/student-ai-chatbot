@@ -6,6 +6,7 @@ const OpenAI = require("openai");
 
 const app = express();
 
+app.use(express.static(__dirname));
 app.use(cors());
 app.use(express.json());
 
@@ -68,6 +69,8 @@ Be encouraging, clear, and conversational.
     }
 });
 
-app.listen(3000, () => {
-    console.log("🚀 Ava AI server is running on http://localhost:3000");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log(`🚀 Ava AI server is running on port ${PORT}`);
 });
